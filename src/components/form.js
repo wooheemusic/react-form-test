@@ -27,6 +27,8 @@ submit event 발생 시, validation이 각 항목에 관해 모두 수행되지 
  * 
  * 
  */
+
+
 export default class Form extends Component {
 
   constructor(props) {
@@ -66,10 +68,14 @@ export default class Form extends Component {
 
   render() {
     console.log('Form render, this.state.validationResults :', this.state.validationResults)
-    return (
+    const aaa = {name:"bbb", isBBB : true}
+    const bbb =true
+
+    return ( 
       <form onSubmit={this.onSubmit}>
-        <Input name="username" value={this.state.username} validity={this.state.validationResults.username} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidationChange={this.onValidationChange} />
-        <Input name="password" value={this.state.password} validity={this.state.validationResults.password} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidationChange={this.onValidationChange} />
+        <input />
+        <Input getMatch="ss" name="username" value={this.state.username} validity={this.state.validationResults.username} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidated={this.onValidationChange} />
+        <Input name="password" value={this.state.password} validity={this.state.validationResults.password} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidated={this.onValidationChange} />
         <Button> submit </ Button>
       </form>
     )

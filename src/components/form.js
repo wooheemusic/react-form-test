@@ -33,50 +33,96 @@ export default class Form extends Component {
 
   constructor(props) {
     super(props)
+
     this.onSubmit = this.onSubmit.bind(this)
-    this.onValueChange = this.onValueChange.bind(this)
-    this.onValidationChange = this.onValidationChange.bind(this)
+    this.onInputValueChange = this.onInputValueChange.bind(this)
 
     this.state = {
-      submitted: false,
-      username: 'www@eeee',
-      password: '22',
-      validationResults: {}
+      isLoading: false,
+      isSubmitted: false,
+      values: {
+        username: '12123@wdwd',
+        password: ''
+      },
+      validities: {
+        username: true,
+        password: true
+      }
     }
   }
 
-  onValueChange(name, value) {
-    this.setState(() => ({ [name]: value }))
-  }
-
-  onValidationChange(name, validity) {
+  onInputValueChange(name, value, validity) {
     this.setState((prev) => {
-      let validationResults = Object.assign(prev.validationResults, { [name]: validity })
-      return { validationResults }
+      let values = Object.assign(prev.values, { [name]: value })
+      let validities = Object.assign(prev.validities, { [name]: validity })
+      return { values, validities }
     })
   }
 
-  async onSubmit(e) {
-    e.preventDefault();
-    console.log('Form submitted', e.target)
-    this.setState({ submitted: true })
-    console.log(await this.state.validationResults.password)
-    console.log(await this.state.validationResults.username)
-    console.log('submitted value after \'setState\' but before this frame ends :', this.state.submitted)
-    console.log('ajax call is excuted here. The whole validation should be done before this statement.')
+  // 네... submit event 에서도 rendering이 필요하므로 await할 수가 없을 것입니다...;
+  // promise로 처리해야겠습니다.
+  onSubmit(e) {
+    e.preventDefault()
+    console.log('Form submitted')
+
+    const validities = this.state.validities
+
+    this.setState({ 
+      isLoading: true,
+      isSubmitted: true
+    })
+
+    for (let i in validities) {
+      //this.setState({ isSubmitted: true })
+      let validity = this.state.validities[i]
+      console.log('Form submit validity', i, validity)
+
+    }
+
+    
+    // await 할 경우 loading에 관한 렌더링이 막힐 듯....
+  }
+
+  processSubmission() {
+    
+    
+  }
+
+  submissionComplete() {
+    this.setState({ 
+      isLoading: false,
+    })
   }
 
   render() {
-    console.log('Form render, this.state.validationResults :', this.state.validationResults)
-    const aaa = {name:"bbb", isBBB : true}
-    const bbb =true
-
-    return ( 
+    console.log('Form render, this.state.validities :', this.state.validities)
+    const testAsyncApi = ()=>(new Promise((s,f)=>{ setTimeout(()=>{s(true)},2000)  }))
+    // const testAsyncApi = ()=>(new Promise((s,f)=>{ s(true)  }))
+    return (
       <form onSubmit={this.onSubmit}>
-        <input />
-        <Input getMatch="ss" name="username" value={this.state.username} validity={this.state.validationResults.username} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidated={this.onValidationChange} />
-        <Input name="password" value={this.state.password} validity={this.state.validationResults.password} submitted={this.state.submitted} onValueChange={this.onValueChange} onValidated={this.onValidationChange} />
-        <Button> submit </ Button>
+        { this.props.isSubmitted ? 'isSubmitted' : undefined}
+        { this.props.isLoading ? 'isLoading' : undefined}
+        <Input
+          name="username"
+          type="email"
+          required
+          //validations={[ 'email', 'xx']}
+          assertTrue={{async : testAsyncApi , message : "xxxxxx"}}
+          value={this.state.values.username}
+          disabled={this.state.isLoading || this.state.validities.username instanceof Promise}
+          isSubmitted={this.state.isSubmitted}
+          onInputValueChange={this.onInputValueChange}
+        />
+        <Input
+          name="password"
+          type="password"
+          required
+          value={this.state.values.password} 
+          disabled={this.state.isLoading}
+          isSubmitted={this.state.isSubmitted} 
+          onInputValueChange={this.onInputValueChange} 
+        />
+        <Button disabled={this.state.isLoading}> submit </ Button>
       </form>
     )
   }

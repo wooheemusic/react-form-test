@@ -234,6 +234,7 @@ export default class Input extends Component {
     const { validationName, validationStatus, validationMessage } = validationResult
     
     // 이 부분이 걱정되어서 rendering의 로그 순서를 확인하였고, form.js의 83, 84 라인의 promise 생성을 변경하여서도 테스트 해보았습니다. 
+    // 동작이 이상합니다... 수정해야할 듯...
     if (validationStatus instanceof Promise) {
       console.log('xxxxx', validationResult)
       validationStatus.then((tf)=>{
